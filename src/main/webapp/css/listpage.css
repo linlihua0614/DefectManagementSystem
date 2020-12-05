@@ -1,0 +1,89 @@
+table.data1 {
+    margin-top:15px;
+    border-collapse:collapse;
+    border:1px solid #aaa;
+    width:100%;
+    box-shadow: rgba(187, 187, 187, 1) 0 0px 9px -1px;
+}
+table.data1 th {
+    vertical-align:baseline;
+    padding:5px 15px 5px 6px;
+    background-color:#C8C8C8;
+    border:1px solid #C8C8C8;
+    text-align:left;
+    color:#fff;
+    font-size:15px;
+}
+table.data1 td {
+    vertical-align:text-top;
+    padding:6px 15px 6px 6px;
+    border:1px solid #aaa;
+    font-size:12px;
+}
+table.data1 tr:nth-child(odd) {
+    background-color:#F5F5F5;
+}
+table.data1 tr:nth-child(even) {
+    background-color:#fff;
+}
+
+.label {
+    /* 确保所有label大小相同并正确对齐 */
+    display: inline-block;
+    width: 150px;
+    text-align: right;
+}
+
+.input{
+    /* 确保所有文本输入框字体相同
+       textarea默认是等宽字体 */
+    font: 1em sans-serif;
+
+    /* 使所有文本输入框大小相同 */
+    width: 200px;
+    box-sizing: border-box;
+    font-size:12px;
+
+    /* 调整文本输入框的边框样式 */
+    border: 1px solid #999;
+}
+
+.select{
+    /* 使所有文本输入框大小相同 */
+    width: 200px;
+    box-sizing: border-box;
+    font-size:12px;
+
+    /* 调整文本输入框的边框样式 */
+    border: 1px solid #999;
+}
+
+.span{
+    font-size:12px;
+}
+
+.button{
+    width:45px;
+    height:24px;
+    font-size: 12px;
+    text-align: center;
+}
+
+input:focus, textarea:focus {
+    /* 给激活的元素一点高亮效果 */
+    border-color: #000;
+}
+
+.div {
+    margin-left:auto;
+    margin-right:auto;
+    width:100%
+    background: #FFF;
+    padding: 18px 18px 9px 18px;
+    box-shadow: rgba(187, 187, 187, 1) 0 0px 18px -1px;
+    -webkit-box-shadow: rgba(187, 187, 187, 1) 0 0px 20px -1px;
+    font: 12px Arial, Helvetica, sans-serif;
+    color: #666;
+    border-radius: 10px;
+    -webkit-border-radius: 10px;
+}

@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.lhlin.dao.ProjectDao">
+    <select id="getProjByName" parameterType="String" resultType="com.lhlin.entity.Project">
+        select * from project where projName=#{projName}
+    </select>
+
+    <select id="getProjById" parameterType="Integer" resultType="com.lhlin.entity.Project">
+        select * from project where id=#{id}
+    </select>
+
+    <select id="getProjs" resultType="com.lhlin.entity.Project" parameterType="java.util.Map">
+        select id,projName,projNum,manager,createUser,createTime,updateUser,updateTime,
+        case isEnd
+        when 0 then '未完结'
+        when 1 then '已完结'
+        when 2 then '暂停'
+        end as isEndStr
+        ,remark from project where 1=1
+        <if test="projName !=null and projName !=''">
+            and projName like '%${projName}%'
+        </if >
+        <if test="isEnd !=null and isEnd != -1">
+            and isEnd=#{isEnd}
+        </if >
+        <if test="startIndex !=null and pageSize !=null">
+            LIMIT #{startIndex},#{pageSize}
+        </if>
+
+    </select>
+    <select id="getAllAvailable" resultType="com.lhlin.entity.Project">
+        select id,projName,projNum,manager,createUser,createTime,updateUser,updateTime,isEnd,remark from project where isEnd = 0
+    </select>
+
+    <select id="getMyDeal" resultType="com.lhlin.entity.Project" parameterType="String">
+        select id,projName,projNum,manager,createUser,createTime,updateUser,updateTime,isEnd,remark from project
+        where id in (select distinct d.projid from defect d,defect_deal dd where d.id=dd.defectid and ((dd.dealuser = #{loginUser} or dd.nextuser = #{loginUser}) or d.handler = #{loginUser}))
+    </select>
+
+    <update id="add" parameterType="com.lhlin.entity.Project">
+        insert into project(projName,projNum,manager,createUser,createTime,updateUser,isEnd,remark)
+        values(#{projName},#{projNum},#{manager},#{createUser},#{createTime},#{updateUser},#{isEnd},#{remark})
+    </update>
+
+    <update id="update" parameterType="com.lhlin.entity.Project">
+        update project set
+         projName = #{projName},
+         projNum = #{projNum},
+         manager = #{manager},
+         updateUser = #{updateUser},
+         isEnd =  #{isEnd},
+         remark = #{remark}
+         where id = #{id}
+    </update>
+
+</mapper>

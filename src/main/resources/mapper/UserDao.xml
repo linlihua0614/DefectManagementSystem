@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.lhlin.dao.UserDao">
+    <select id="getUserByUserName" parameterType="String" resultType="com.lhlin.entity.User">
+        select * from user where username=#{userName}
+    </select>
+
+    <select id="getUsers" resultType="com.lhlin.entity.User" parameterType="java.util.Map">
+        select u.username,u.passWord,
+        case u.role
+        when 0 then '管理员'
+        when 1 then '缺陷处理人员'
+        when 2 then '缺陷发现人员'
+        when 3 then '缺陷确认人员'
+        when 9 then '数据分析人员'
+        end as roleStr,
+        u.createUser,u.createTime,u.updateUser,u.updateTime,
+        case u.useable
+        when 0 then '停用'
+        when 1 then '启用'
+        end as useAbleStr
+        from user u where 1=1
+        <if test="userName !=null and userName !=''">
+            and u.userName like '%${userName}%'
+        </if >
+        <if test="role !=null and role != -1">
+            and u.role=#{role}
+        </if >
+        <if test="useAble !=null and useAble != -1">
+            and u.useAble=#{useAble}
+        </if >
+        <if test="startIndex !=null and pageSize !=null">
+            LIMIT #{startIndex},#{pageSize}
+        </if>
+
+    </select>
+
+    <update id="add" parameterType="com.lhlin.entity.User">
+        insert into user(username, password, role,createuser, createtime,updateuser,useable)
+        values(#{userName}, #{passWord}, #{role}, #{createUser},#{createTime},#{updateUser},#{useAble})
+    </update>
+
+    <update id="update" parameterType="com.lhlin.entity.User">
+        update user set password = #{passWord}, role = #{role}, useable = #{useAble},updateuser = #{updateUser} where username = #{userName}
+    </update>
+
+</mapper>

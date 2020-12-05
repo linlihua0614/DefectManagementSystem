@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE configuration PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-config.dtd">
+<configuration>
+       <!-- 别名定义 -->
+       <typeAliases>
+           <typeAlias type="com.lhlin.entity.User" alias="User"/>
+           <typeAlias type="com.lhlin.entity.Project" alias="Project"/>
+           <typeAlias type="com.lhlin.entity.Defect" alias="Defect"/>
+           <typeAlias type="com.lhlin.entity.Seriousness" alias="Seriousness"/>
+           <typeAlias type="com.lhlin.entity.Priority" alias="Priority"/>
+       </typeAliases>
+</configuration>

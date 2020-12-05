@@ -1,0 +1,249 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.lhlin.dao.DefectDao">
+    <select id="getDefectById" parameterType="String" resultType="com.lhlin.entity.Defect">
+        select
+        d.id,
+        p.projName,
+        d.atProjState,
+        case d.atprojstate
+        when 2 then '需求'
+        when 3 then '设计'
+        when 4 then '开发'
+        when 5 then '测试'
+        when 6 then '实施'
+        when 7 then '维护'
+        end atProjStateStr,
+        d.module,
+        d.tester,
+        d.handler,
+        d.type,
+        case d.type
+        when 1 then '缺陷'
+        when 2 then '优化'
+        when 3 then '建议'
+        when 4 then '需求'
+        end typeStr,
+        d.seriousness,
+        case d.seriousness
+        when 1 then '非常严重'
+        when 2 then '比较严重'
+        when 3 then '一般'
+        when 4 then '轻微'
+        end seriousnessStr,
+        d.priority,
+        case d.priority
+        when 1 then '立即解决'
+        when 2 then '高优先级'
+        when 3 then '正常处理'
+        when 4 then '低优先级'
+        end priorityStr,
+        d.recurrencerate,
+        concat(d.recurrencerate,'%') recurrenceRateStr,
+        d.state,
+        case d.state
+        when 'new' then '新建'
+        when 'open' then '打开'
+        when 'assigned' then '指派'
+        when 'fixed' then '已修复'
+        when 'reopen' then '从新打开'
+        when 'rejectd' then '拒绝'
+        when 'deferred' then '延期'
+        when 'closed' then '关闭'
+        end stateStr,
+        d.step,
+        d.actualresult,
+        d.expectresult,
+        d.remark,
+        d.createtime
+        from defect d
+        left join project p on d.projid = p.id
+        where d.id=#{id}
+    </select>
+
+
+    <select id="getDefects" resultType="com.lhlin.entity.Defect">
+        select
+        d.id,
+        p.projName,
+        d.atProjState,
+        case d.atprojstate
+        when 2 then '需求'
+        when 3 then '设计'
+        when 4 then '开发'
+        when 5 then '测试'
+        when 6 then '实施'
+        when 7 then '维护'
+        end atProjStateStr,
+        d.module,
+        d.tester,
+        d.handler,
+        d.type,
+        case d.type
+        when 1 then '缺陷'
+        when 2 then '优化'
+        when 3 then '建议'
+        when 4 then '需求'
+        end typeStr,
+        d.seriousness,
+        case d.seriousness
+        when 1 then '非常严重'
+        when 2 then '比较严重'
+        when 3 then '一般'
+        when 4 then '轻微'
+        end seriousnessStr,
+        d.priority,
+        case d.priority
+        when 1 then '立即解决'
+        when 2 then '高优先级'
+        when 3 then '正常处理'
+        when 4 then '低优先级'
+        end priorityStr,
+        concat(d.recurrencerate,'%') recurrenceRateStr,
+        d.state,
+        case d.state
+        when 'new' then '新建'
+        when 'open' then '打开'
+        when 'assigned' then '指派'
+        when 'fixed' then '已修复'
+        when 'reopen' then '从新打开'
+        when 'rejectd' then '拒绝'
+        when 'deferred' then '延期'
+        when 'closed' then '关闭'
+        end stateStr,
+        d.step,
+        d.actualresult,
+        d.expectresult,
+        d.remark,
+        d.createtime
+        from defect d left join project p on d.projid = p.id
+        where 1=1
+        <if test="role == 1 or role == 2 or role == 3">
+            and  d.id in (select distinct defectid from defect_deal where dealuser = #{loginUser} or nextuser = #{loginUser} )
+        </if>
+        <if test="role == 0 or role == 1 or role == 3 or role == 9">
+            and d.state != 'new'
+        </if>
+        <if test="projName !=null and projName !=''">
+            and p.projName like '%${projName}%'
+        </if >
+        <if test="type !=null and type != -1">
+            and d.type=#{type}
+        </if >
+        <if test="state !=null and state != '-1'">
+            and d.state=#{state}
+        </if >
+        <if test="seriousness !=null and seriousness != -1">
+            and d.seriousness=#{seriousness}
+        </if >
+        <if test="priority !=null and priority != -1">
+            and d.priority=#{priority}
+        </if >
+        <if test="recurrenceRate !=null and recurrenceRate != -1">
+            and d.recurrencerate=#{recurrenceRate}
+        </if >
+        <if test="tester !=null and tester !=''">
+            and d.tester = #{tester}
+        </if >
+        <if test="handler !=null and handler !=''">
+            and d.handler = #{handler}
+        </if >
+        <if test="startTime !=null and startTime !=''">
+            and d.createTime >= #{startTime}
+        </if >
+        <if test="endTime !=null and endTime !=''">
+            and d.createTime &lt;= concat(#{endTime},' 23:59:59')
+        </if >
+        order by d.createtime desc
+        <if test="startIndex !=null and pageSize !=null">
+            LIMIT #{startIndex},#{pageSize}
+        </if>
+    </select>
+
+    <update id="add" parameterType="com.lhlin.entity.Defect">
+        insert into defect(id,projId, atProjState, module, tester,handler,type,seriousness,priority,recurrencerate,state,step,actualResult,expectResult,remark,createTime)
+        values(#{id},#{projId}, #{atProjState}, #{module}, #{tester},#{handler},#{type},#{seriousness},#{priority},#{recurrenceRate},#{state},#{step},#{actualResult},#{expectResult},#{remark},#{createTime})
+    </update>
+
+    <update id="update" parameterType="com.lhlin.entity.Defect">
+        update defect set projId=#{projId},atProjState=#{atProjState},module=#{module}, tester=#{tester},
+        handler=#{handler},type=#{type},seriousness=#{seriousness},
+        priority=#{priority},recurrencerate=#{recurrenceRate},state=#{state},step=#{step},
+        actualResult=#{actualResult},expectResult=#{expectResult},remark=#{remark}
+        where id = #{id}
+    </update>
+
+    <update id="updateDeal" parameterType="com.lhlin.entity.Defect">
+        update defect set handler=#{handler},state=#{state} where id = #{id}
+    </update>
+
+    <update id="delete" parameterType="String">
+        delete from defect where id=#{id}
+    </update>
+
+    <update id="addDefectImg" parameterType="com.lhlin.entity.DefectImg">
+        insert into defect_img(defectid, img, filename, extension, imgorder)
+        values(#{defectId}, #{img}, #{fileName},#{extension}, #{imgOrder})
+    </update>
+
+    <select id="getDefectImg" parameterType="String" resultType="com.lhlin.entity.DefectImg">
+        select * from defect_img where defectid=#{defectId}
+    </select>
+
+
+    <update id="delAllDefectImgByDefectId" parameterType="String">
+       delete from defect_img where defectid=#{defectId}
+    </update>
+
+    <update id="addDefectDeal" parameterType="com.lhlin.entity.DefectDeal">
+        insert into defect_deal(defectid, dealuser, oldstate,newstate,nextuser, remark)
+        values(#{defectId}, #{dealUser}, #{oldState},#{newState},#{nextUser},#{remark})
+    </update>
+
+    <select id="getDefectDeals" parameterType="String" resultType="com.lhlin.entity.DefectDeal">
+        select
+        dealUser,
+        dealTime,
+        oldState,
+        case oldState
+        when 'new' then '新建'
+        when 'open' then '打开'
+        when 'assigned' then '指派'
+        when 'fixed' then '已修复'
+        when 'reopen' then '从新打开'
+        when 'rejectd' then '拒绝'
+        when 'deferred' then '延期'
+        when 'closed' then '关闭'
+        end oldStateStr,
+        newState,
+        case newState
+        when 'new' then '新建'
+        when 'open' then '打开'
+        when 'assigned' then '指派'
+        when 'fixed' then '已修复'
+        when 'reopen' then '从新打开'
+        when 'rejectd' then '拒绝'
+        when 'deferred' then '延期'
+        when 'closed' then '关闭'
+        end newStateStr,
+        nextUser,
+        remark,
+        case u.role
+        when 0 then '管理员'
+        when 1 then '缺陷处理人员'
+        when 2 then '缺陷发现人员'
+        when 3 then '缺陷确认人员'
+        when 9 then '数据分析人员'
+        end as roleStr
+        from defect_deal d
+        left join user u on d.dealUser = u.userName
+        where d.defectid=#{defectId}
+    </select>
+
+    <update id="deleteDefectDealByDefectId"  parameterType="String">
+        delete from defect_deal where defectid = #{defectId}
+    </update>
+
+</mapper>
