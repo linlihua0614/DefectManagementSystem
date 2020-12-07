@@ -5,4 +5,6 @@ DefectManagementSystem is a defect management tool based on Java EE, which is si
 
 #Direct running at Tomcat
 
+#At present, this system only supports chrome
+
 #Login administrator account: admin / 123
